@@ -220,6 +220,7 @@ dependencies {
     androidTestCompile("com.google.truth:truth:$rootProject.ext.googletruthVersion") {
         exclude group: 'junit' // Android has JUnit built in
     }
+    androidTestCompile project(":test-butler-library-1.0.0")
 
     //Plain and Mock Unit testing
     testCompile "junit:junit:$rootProject.ext.junitVersion"

@@ -1,0 +1,2 @@
+configurations.maybeCreate("default")
+artifacts.add("default", file('test-butler-library-1.0.0.aar'))
