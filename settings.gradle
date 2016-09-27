@@ -1,1 +1,1 @@
-include ':app', ':test-butler-library-1.0.0', ':greenandroid'
+include ':app', ':test-butler-library-1.0.0', ':greenandroid', ':whiteandroid'

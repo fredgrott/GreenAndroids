@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/greenandroid/greenandroid.iml" filepath="$PROJECT_DIR$/greenandroid/greenandroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/test-butler-library-1.0.0/test-butler-library-1.0.0.iml" filepath="$PROJECT_DIR$/test-butler-library-1.0.0/test-butler-library-1.0.0.iml" />
+      <module fileurl="file://$PROJECT_DIR$/whiteandroid/whiteandroid.iml" filepath="$PROJECT_DIR$/whiteandroid/whiteandroid.iml" />
     </modules>
   </component>
 </project>
