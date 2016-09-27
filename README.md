@@ -1,7 +1,7 @@
 GreenAndroids
 =============
 
-A Task Android Application Demo.
+A WikiNote Android Application Demo.
 
 # Senior Android Developer Note
 
@@ -71,9 +71,10 @@ Created by [Fred Grott](http://shareme.github.com).
 # Credits
 
 
-The original concept and code for the app is from:
+The original concept and code for the app is from the former 
+GogoleCode apps-for-android project that was authored by Google employees.
 
-[Google's android-architecture-todo-mvp]()
+[
 
 # License
 
