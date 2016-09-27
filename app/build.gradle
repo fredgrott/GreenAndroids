@@ -1,29 +1,243 @@
 apply plugin: 'com.android.application'
+apply plugin: 'me.tatarka.retrolambda'
+apply plugin: 'com.jakewharton.hugo'
+apply plugin: 'de.hannesstruss.godot'
+apply plugin: 'spoon'
+apply plugin: 'org.moallemi.advanced-build-version'
+apply plugin: 'com.nikitakozlov.weaverlite'
 
-android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.2"
-    defaultConfig {
-        applicationId "com.github.shareme.greenandroids"
-        minSdkVersion 16
-        targetSdkVersion 24
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+advancedVersioning {
+    nameOptions {
+        versionMajor 1
+        versionBuild 0
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
+    codeOptions {
+
+        dependsOnTasks 'release'
+
+    }
+    //if flavors than re use nameFormat to include the flavorName
+    outputOptions {
+        renameOutput true
+
     }
 }
 
+def appVersionName = advancedVersioning.versionName
+def appVersionCode = advancedVersioning.versionCode
+
+weaverLite {
+    enabledForDebug = true
+    enabledForRelease = false
+}
+/*
+  Main Features:
+       -UIAutomator executed as separate product flavor so that we can
+        run it at api 18 and higher
+       -Retrolambda enabled instead of using Jack and Jill
+       -Using the builtin shrinker
+       -Using product flavors with mock, prod and uiauto being those
+        product flavors(note: we do have to set a product flavor for
+        debug but we do have to set-up debug src folder so that
+        we can create a inject class and the debug drawer classes
+        that we will use in the app during debug runs)
+       -Using JakeWharton's Hugo for debug logs via @DebugLog only
+        on debug  builds
+       -Using godot to keep time of builds
+       -Using versioning plugin to version app
+       -Using Pury to profile app, logs before api 21 do not bridge more than
+        one process do not know if this profiling tool has that solved, will
+        find out-(note in app class must set up pury this way:
+                if debug Pury.setLogger(ourLoggerinterface)
+               and ourLoggerInterface class routes stuff to
+               out to the timber log wrapper we use
+        -Using LeakCanary to track down memory leaks and that gets
+         setup in our application class
+        -Using Jake Wharton's timber log wrapper and that
+         gets setup in our application class
+
+
+ */
+
+
+
+
+android {
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
+    defaultConfig {
+        applicationId "com.github.shareme.greenandroids"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode appVersionCode
+        versionName appVersionName
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        jackOptions{
+            enabled false
+        }
+
+    }
+    packagingOptions {
+        exclude 'LICENSE.txt'
+    }
+    lintOptions {
+        abortOnError false
+    }
+
+
+    aaptOptions {
+        noCompress 'txt'
+        ignoreAssetsPattern "!.svn:!.git:!.ds_store:!*.scc:.*:<dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"
+    }
+
+    signingConfigs {
+
+        release {
+            //props stored in gradle.properties at userhome .gradle subfolder
+            // for product release and you just substitute the correct vars
+            // otherwise for demo of libs use what is listed
+
+            storeFile file('demokey.jks')
+            storePassword 'droiddroid'
+            keyAlias 'dkey'
+            keyPassword 'droiddroid'
+        }
+
+    }
+
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled true
+            // Uses new built-in shrinker http://tools.android.com/tech-docs/new-build-system/built-in-shrinker
+            useProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro','proguard-matches-android-optimize.pro'
+            testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguardTest-rules.pro'
+            testCoverageEnabled true
+            applicationIdSuffix '.dev'
+            versionNameSuffix '-dev'
+
+        }
+
+        release {
+            minifyEnabled true
+            useProguard true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro','proguard-matches-android-optimize.pro'
+            testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguardTest-rules.pro'
+            signingConfig signingConfigs.release
+            applicationIdSuffix '.release'
+            versionNameSuffix '-release'
+
+
+        }
+
+    }
+    // If you need to add more flavors, consider using flavor dimensions.
+    //noinspection GroovyMissingReturnStatement
+    productFlavors {
+        mock {
+            applicationIdSuffix = ".mock"
+        }
+        prod {
+
+        }
+        // to enable testing using uiautomater at minSdk 18
+        uiauto{
+            minSdkVersion 18
+        }
+    }
+    // Remove mockRelease and uiautoRelease as it's not needed.
+    android.variantFilter { variant ->
+        if(variant.buildType.name.equals('release')
+                && variant.getFlavors().get(0).name.equals('mock') || variant.getFlavors().get(0).name.equals('uiauto')) {
+            variant.setIgnore(true);
+        }
+
+    }
+
+    // Always show the result of every unit test, even if it passes.
+    testOptions.unitTests.all {
+        testLogging {
+            events 'passed', 'skipped', 'failed', 'standardOut', 'standardError'
+        }
+    }
+
+}
+spoon {
+
+    debug = true
+
+    baseOutputDir = file("$rootProject.ext.ourReportsDir/spoon")
+
+    if (project.hasProperty('spoonClassName')) {
+        className = project.spoonClassName
+
+        if (project.hasProperty('spoonMethodName')) {
+            methodName = project.spoonMethodName
+        }
+    }
+
+}
+/*
+ Dependency versions are defined in the top level build.gradle file. This helps keeping track of
+ all versions in a single place. This improves readability and helps managing project complexity.
+ */
+
 dependencies {
+    // App's dependencies, including test
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    compile "com.jakewharton:butterknife:$rootProject.ext.butterknifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.ext.butterknifeVersion"
+    compile "org.aspectj:aspectjrt:$rootProject.ext.aspectjrtVersion"
+    compile "com.nikitakozlov.pury:annotations:$rootProject.ext.puryAnnotationsVersion"
+    debugCompile "com.nikitakozlov.pury:pury:$rootProject.ext.puryVersion"
+    //compile "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.ext.leakcanaryVersion"
+    //debugCompile "com.squareup.leakcanary:leakcanary-android:$rootProject.ext.leakcanaryVersion"
+    compile "com.jakewharton.timber:timber:$rootProject.ext.timberVersion"
+    compile "com.google.guava:guava:$rootProject.guavaVersion"
+
+    //Instrumented unit testing
+    androidTestCompile("com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion", {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    testCompile 'junit:junit:4.12'
+    androidTestCompile "com.squareup.spoon:spoon-client:$spoonClientVersion"
+    // androidTestCompile "org.mockito:mockito-core:$rootProject.ext.mockitoVersion"
+    // androidTestCompile "com.google.dexmaker:dexmaker:$rootProject.ext.dexmakerVersion"
+    // androidTestCompile "com.google.dexmaker:dexmaker-mockito:$rootProject.ext.dexmakerVersion"
+    //androidTestCompile "com.squareup.assertj:assertj-android:$rootProject.ext.assertjandroidVersion@aar"
+    //androidTestCompile "com.squareup.assertj:assertj-android-support-v4:$rootProject.ext.assertjandroidVersion@aar"
+    //androidTestCompile "com.squareup.assertj:assertj-android-appcompat-v7:$rootProject.ext.assertjandroidVersion@aar"
+    androidTestCompile "junit:junit:$rootProject.ext.junitVersion"
+    androidTestCompile "org.mockito:mockito-core:$rootProject.ext.mockitoVersion"
+    androidTestCompile "com.google.dexmaker:dexmaker:$rootProject.ext.dexmakerVersion"
+    androidTestCompile "com.google.dexmaker:dexmaker-mockito:$rootProject.ext.dexmakerVersion"
+    androidTestCompile("com.google.truth:truth:$rootProject.ext.googletruthVersion") {
+        exclude group: 'junit' // Android has JUnit built in
+    }
+
+    //Plain and Mock Unit testing
+    testCompile "junit:junit:$rootProject.ext.junitVersion"
+    //testCompile "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"
+    testCompile "org.powermock:powermock-mockito-release-full:$rootProject.ext.powermockitoVersion"
+    testCompile "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"
+    testCompile "org.hamcrest:hamcrest-all:$rootProject.ext.hamcrestVersion"
+    testCompile("com.google.truth:truth:$rootProject.ext.googletruthVersion") {
+        exclude group: 'junit' // Android has JUnit built in
+    }
+
+
+    //UIautomator Testing
+    androidTestUiautoCompile "com.android.support.test.uiautomator:uiautomator-v18:$rootProject.ext.uiautomatorVersion"
+
+    debugCompile "com.squareup.leakcanary:leakcanary-android:$rootProject.ext.leakcanaryVersion"
+    releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.ext.leakcanaryVersion"
+    testCompile "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.ext.leakcanaryVersion"
+
+
 }
