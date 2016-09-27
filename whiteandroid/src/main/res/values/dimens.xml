@@ -12,4 +12,11 @@
     <dimen name="debug_drawer_vertical_padding">16dp</dimen>
     <!-- Toolbar Padding -->
     <dimen name="tool_bar_top_padding">0dp</dimen>
+
+    <dimen name="spacing_big">16dp</dimen>
+
+    <dimen name="padding_small">4dp</dimen>
+
+    <dimen name="font_normal">16sp</dimen>
+
 </resources>

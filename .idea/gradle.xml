@@ -13,6 +13,7 @@
             <option value="$PROJECT_DIR$/greenandroid" />
             <option value="$PROJECT_DIR$/test-butler-library-1.0.0" />
             <option value="$PROJECT_DIR$/whiteandroid" />
+            <option value="$PROJECT_DIR$/whiteandroidnoop" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
