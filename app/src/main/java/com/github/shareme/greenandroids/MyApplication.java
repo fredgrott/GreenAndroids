@@ -25,6 +25,7 @@ import com.github.shareme.greenandroids.util.ANRError;
 import com.github.shareme.greenandroids.util.ANRWatchDog;
 import com.github.shareme.greenandroids.util.DroidUuidFactory;
 import com.github.shareme.greenandroids.util.MyCrashLibrary;
+import com.squareup.leakcanary.LeakCanary;
 
 import timber.log.Timber;
 
@@ -64,6 +65,7 @@ public class MyApplication extends Application {
     topLevelExceptionSetUp();
 
 
+    leakCanarySetUp();
 
     timberLogWrapperSetUp();
 
@@ -71,6 +73,22 @@ public class MyApplication extends Application {
 
 
   }
+
+  /**
+   * sets up leakcanary for memory leak detection on
+   * debug builds
+   */
+  public void leakCanarySetUp(){
+    if (LeakCanary.isInAnalyzerProcess(this)) {
+      // This process is dedicated to LeakCanary for heap analysis.
+      // You should not init your app in this process.
+      return;
+    }
+    LeakCanary.install(this);
+    // Normal app init code...
+  }
+
+
 
   /**
    * Sets up a User Unique ID that is encrypted for such uses
