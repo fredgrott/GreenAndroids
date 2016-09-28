@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/test-butler-library-1.0.0/test-butler-library-1.0.0.iml" filepath="$PROJECT_DIR$/test-butler-library-1.0.0/test-butler-library-1.0.0.iml" />
       <module fileurl="file://$PROJECT_DIR$/whiteandroid/whiteandroid.iml" filepath="$PROJECT_DIR$/whiteandroid/whiteandroid.iml" />
       <module fileurl="file://$PROJECT_DIR$/whiteandroidnoop/whiteandroidnoop.iml" filepath="$PROJECT_DIR$/whiteandroidnoop/whiteandroidnoop.iml" />
+      <module fileurl="file://$PROJECT_DIR$/yellowandroid/yellowandroid.iml" filepath="$PROJECT_DIR$/yellowandroid/yellowandroid.iml" />
     </modules>
   </component>
 </project>
