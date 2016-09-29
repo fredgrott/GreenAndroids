@@ -193,6 +193,10 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(":greenandroid")
     compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    compile "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
+    compile "com.android.support:design:$rootProject.supportLibraryVersion"
+    compile "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
+    compile "com.android.support:support-v4:$rootProject.supportLibraryVersion"
     compile "com.jakewharton:butterknife:$rootProject.ext.butterknifeVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.ext.butterknifeVersion"
     compile "org.aspectj:aspectjrt:$rootProject.ext.aspectjrtVersion"
@@ -202,10 +206,18 @@ dependencies {
     //debugCompile "com.squareup.leakcanary:leakcanary-android:$rootProject.ext.leakcanaryVersion"
     compile "com.jakewharton.timber:timber:$rootProject.ext.timberVersion"
     compile "com.google.guava:guava:$rootProject.guavaVersion"
+    compile "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
+
 
     //Instrumented unit testing
     androidTestCompile("com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion", {
         exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    androidTestCompile ("com.android.support.test:runner:$rootProject.ext.runnerVersion",{
+        exclude group:'com.android.support', module:'support-annotations'
+    })
+    androidTestCompile ("com.android.support.test:rules:$rootProject.ext.runnerVersion",{
+        exclude group:'com.android.support', module:'support-annotations'
     })
     androidTestCompile "com.squareup.spoon:spoon-client:$spoonClientVersion"
     // androidTestCompile "org.mockito:mockito-core:$rootProject.ext.mockitoVersion"
@@ -222,6 +234,16 @@ dependencies {
         exclude group: 'junit' // Android has JUnit built in
     }
     androidTestCompile project(":test-butler-library-1.0.0")
+    androidTestCompile "com.android.support:support-annotations:$rootProject.supportLibraryVersion"
+
+    androidTestCompile "com.android.support.test.espresso:espresso-core:$rootProject.espressoVersion"
+    androidTestCompile ("com.android.support.test.espresso:espresso-contrib:$rootProject.espressoVersion",{
+        exclude group: 'com.android.support', module:'design'
+        exclude group: 'com.android.support', module:'recyclerview-v7'
+        exclude group: 'com.android.support', module:'support-v4'
+    })
+    androidTestCompile "com.android.support.test.espresso:espresso-intents:$rootProject.espressoVersion"
+
 
     //Plain and Mock Unit testing
     testCompile "junit:junit:$rootProject.ext.junitVersion"
