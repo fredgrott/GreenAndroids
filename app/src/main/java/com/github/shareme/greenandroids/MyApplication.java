@@ -16,9 +16,12 @@ governing permissions and limitations under License.
 
 package com.github.shareme.greenandroids;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Looper;
+import android.os.StrictMode;
 import android.util.Log;
 
 import com.github.shareme.greenandroids.util.ANRError;
@@ -58,6 +61,8 @@ public class MyApplication extends Application {
 
   @Override
   public void onCreate() {
+    strictModeSetUp();
+
     super.onCreate();
 
     setUpUUID();
@@ -236,5 +241,100 @@ public class MyApplication extends Application {
     }
   }
 
+  @SuppressLint("NewApi")
+  public void strictModeSetUp(){
+    if(BuildConfig.DEBUG){
+      if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                .detectDiskReads()
+                .detectDiskWrites()
+                .detectNetwork()
+                .detectCustomSlowCalls()
+                .penaltyLog()
+                .build());
+      }else{
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                .detectDiskReads()
+                .detectDiskWrites()
+                .detectNetwork()
+                .detectCustomSlowCalls()
+                .detectResourceMismatches()
+                .penaltyLog()
+                .build());
+      }
+      if(Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2){
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectLeakedClosableObjects()
+                .detectLeakedSqlLiteObjects()
+                .detectLeakedRegistrationObjects()
+                .detectActivityLeaks()
+                .penaltyLog()
+                .penaltyDeath()
+                .build());
+      }if(Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN_MR2){
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectLeakedClosableObjects()
+                .detectLeakedSqlLiteObjects()
+                .detectLeakedRegistrationObjects()
+                .detectActivityLeaks()
+                .detectFileUriExposure()
+                .penaltyLog()
+                .penaltyDeath()
+                .build());
+      }if(Build.VERSION.SDK_INT> Build.VERSION_CODES.JELLY_BEAN_MR2 || Build.VERSION.SDK_INT < Build.VERSION_CODES.M){
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectLeakedClosableObjects()
+                .detectLeakedSqlLiteObjects()
+                .detectLeakedRegistrationObjects()
+                .detectActivityLeaks()
+                .detectFileUriExposure()
+                .penaltyLog()
+                .penaltyDeath()
+                .build());
+      }if(Build.VERSION.SDK_INT> Build.VERSION_CODES.LOLLIPOP_MR1 || Build.VERSION.SDK_INT<Build.VERSION_CODES.N){
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectLeakedClosableObjects()
+                .detectLeakedSqlLiteObjects()
+                .detectLeakedRegistrationObjects()
+                .detectActivityLeaks()
+                .detectFileUriExposure()
+                .detectCleartextNetwork()
+                .penaltyLog()
+                .penaltyDeath()
+                .build());
+      }if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N){
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectLeakedClosableObjects()
+                .detectLeakedSqlLiteObjects()
+                .detectLeakedRegistrationObjects()
+                .detectActivityLeaks()
+                .detectFileUriExposure()
+                .detectCleartextNetwork()
+                .penaltyLog()
+                .penaltyDeath()
+                .build());
+      }
+    }
+
+
+
+    if(BuildConfig.DEBUG){
+      StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+      .detectDiskReads()
+      .detectDiskWrites()
+      .detectNetwork()
+      .detectCustomSlowCalls()
+      .penaltyLog()
+      .build());
+      StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+      .detectLeakedClosableObjects()
+      .detectLeakedSqlLiteObjects()
+      .penaltyLog()
+      .penaltyDeath()
+      .build());
+
+
+    }
+  }
 
 }
