@@ -318,23 +318,7 @@ public class MyApplication extends Application {
 
 
 
-    if(BuildConfig.DEBUG){
-      StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-      .detectDiskReads()
-      .detectDiskWrites()
-      .detectNetwork()
-      .detectCustomSlowCalls()
-      .penaltyLog()
-      .build());
-      StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-      .detectLeakedClosableObjects()
-      .detectLeakedSqlLiteObjects()
-      .penaltyLog()
-      .penaltyDeath()
-      .build());
 
-
-    }
   }
 
 }
